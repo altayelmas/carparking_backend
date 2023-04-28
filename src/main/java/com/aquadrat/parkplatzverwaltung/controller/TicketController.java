@@ -2,6 +2,7 @@ package com.aquadrat.parkplatzverwaltung.controller;
 
 import com.aquadrat.parkplatzverwaltung.model.Ticket;
 import com.aquadrat.parkplatzverwaltung.model.dto.TicketCreateRequest;
+import com.aquadrat.parkplatzverwaltung.model.dto.TicketDto;
 import com.aquadrat.parkplatzverwaltung.service.TicketService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,7 +21,7 @@ public class TicketController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Ticket> createParkingLot(@RequestBody TicketCreateRequest request) {
+    public ResponseEntity<TicketDto> createParkingLot(@RequestBody TicketCreateRequest request) {
         return ResponseEntity.ok(ticketService.createTicket(request));
     }
 

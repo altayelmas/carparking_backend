@@ -1,5 +1,6 @@
 package com.aquadrat.parkplatzverwaltung.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,9 +16,9 @@ public class Ticket {
     private Integer ticketID;
     private Date entryDate;
     private Date exitDate;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Vehicle vehicle;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private ParkSlot parkSlot;
     @ManyToOne
     @JoinColumn(name = "parkinglot_id", referencedColumnName = "lotID")

@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ParkingLotRepository extends JpaRepository<ParkingLot, Integer> {
     List<ParkingLot> findAll();
-    ParkingLot findByLotID(Integer lotID);
+    //ParkingLot findByLotID(Integer lotID);
 }

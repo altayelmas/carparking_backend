@@ -16,8 +16,8 @@ public class ParkingLot {
     private String name;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Address address;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ParkSlot> parkSlots;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Ticket> tickets;
 }

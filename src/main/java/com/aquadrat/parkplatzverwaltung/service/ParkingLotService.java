@@ -1,5 +1,6 @@
 package com.aquadrat.parkplatzverwaltung.service;
 
+import com.aquadrat.parkplatzverwaltung.exception.NotFoundException;
 import com.aquadrat.parkplatzverwaltung.model.Address;
 import com.aquadrat.parkplatzverwaltung.model.ParkingLot;
 import com.aquadrat.parkplatzverwaltung.model.ParkSlot;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ParkingLotService {
@@ -40,8 +42,12 @@ public class ParkingLotService {
     }
 
     public ParkingLot getParkingLotById(Integer lotID) {
-        ParkingLot parkingLot = lotRepository.findByLotID(lotID);
-        return parkingLot;
+        Optional<ParkingLot> parkingLot = lotRepository.findById(lotID);
+        if (parkingLot.isEmpty()) {
+            // TODO - should return exception
+            throw new NotFoundException("Parking Lot not found");
+        }
+        return parkingLot.get();
     }
 
 }
