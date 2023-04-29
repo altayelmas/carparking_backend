@@ -1,10 +1,12 @@
 package com.aquadrat.parkplatzverwaltung.service;
 
 import com.aquadrat.parkplatzverwaltung.exception.NotFoundException;
+import com.aquadrat.parkplatzverwaltung.mapper.ParkingLotMapper;
 import com.aquadrat.parkplatzverwaltung.model.Address;
 import com.aquadrat.parkplatzverwaltung.model.ParkingLot;
 import com.aquadrat.parkplatzverwaltung.model.ParkSlot;
 import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotCreateRequest;
+import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotDto;
 import com.aquadrat.parkplatzverwaltung.repository.ParkingLotRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,38 +18,41 @@ import java.util.Optional;
 public class ParkingLotService {
 
     private final ParkingLotRepository lotRepository;
+    private final ParkingLotMapper parkingLotMapper;
 
-    public ParkingLotService(ParkingLotRepository lotRepository) {
+    public ParkingLotService(ParkingLotRepository lotRepository, ParkingLotMapper parkingLotMapper) {
         this.lotRepository = lotRepository;
+        this.parkingLotMapper = parkingLotMapper;
     }
-    public ParkingLot createParkingLot(ParkingLotCreateRequest request) {
+    public ParkingLotDto createParkingLot(ParkingLotCreateRequest request) {
         ParkingLot parkingLot = new ParkingLot();
         // TODO - Discuss the Address
-        Address address = new Address(null, request.getStreet(), request.getCity(), request.getPostCode(), request.getCountry(), null);
+        Address address = new Address(null, request.getStreet(), request.getCity(), request.getPostCode(), request.getCountry(), parkingLot);
         parkingLot.setName(request.getName());
 
         List<ParkSlot> parkSlotList = new ArrayList<>();
         for (int i = 0; i < request.getNumberOfSlots(); i++) {
             // TODO - Discuss the parkSlotList
-            parkSlotList.add(new ParkSlot(null, true, null, null));
+            parkSlotList.add(new ParkSlot(null, true, parkingLot, null));
         }
         parkingLot.setParkSlots(parkSlotList);
         parkingLot.setAddress(address);
 
-        return lotRepository.save(parkingLot);
+        return parkingLotMapper.convertToDto(lotRepository.save(parkingLot));
     }
 
-    public List<ParkingLot> getAll() {
-        return lotRepository.findAll();
+    public List<ParkingLotDto> getAll() {
+        List<ParkingLot> parkingLotList = lotRepository.findAll();
+        return parkingLotMapper.lotListToLotDtoList(parkingLotList);
     }
 
-    public ParkingLot getParkingLotById(Integer lotID) {
+    public ParkingLotDto getParkingLotById(Integer lotID) {
         Optional<ParkingLot> parkingLot = lotRepository.findById(lotID);
         if (parkingLot.isEmpty()) {
             // TODO - should return exception
             throw new NotFoundException("Parking Lot not found");
         }
-        return parkingLot.get();
+        return parkingLotMapper.convertToDto(parkingLot.get());
     }
 
 }

@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ParkingLotResponse {
-    // TODO Parking Lot Dto is to be implemented
+    private ParkingLotDto parkingLotDto;
     private boolean isSuccess;
     private String message;
 }

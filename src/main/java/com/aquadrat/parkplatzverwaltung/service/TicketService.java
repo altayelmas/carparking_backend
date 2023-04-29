@@ -1,5 +1,7 @@
 package com.aquadrat.parkplatzverwaltung.service;
 
+import com.aquadrat.parkplatzverwaltung.exception.NotAvailableException;
+import com.aquadrat.parkplatzverwaltung.exception.NotFoundException;
 import com.aquadrat.parkplatzverwaltung.mapper.TicketMapper;
 import com.aquadrat.parkplatzverwaltung.model.ParkSlot;
 import com.aquadrat.parkplatzverwaltung.model.ParkingLot;
@@ -44,12 +46,15 @@ public class TicketService {
         Optional<ParkingLot> parkingLot = parkingLotRepository.findById(request.getLotID());
         if (parkingLot.isEmpty()) {
             // TODO - should return exception
+            throw new NotFoundException("Parking Lot not found");
         }
         ParkingLot p = parkingLot.get();
         ticket.setParkinglot(p);
         ParkSlot parkSlot = findParkSlot(p.getParkSlots(), request.getSlotID());
         // TODO - should check if the park slot is available, should return exception
-
+        if (!parkSlot.isAvailable()) {
+            throw new NotAvailableException("Park Slot not available");
+        }
         ticket.setParkSlot(parkSlot);
         return ticketMapper.convertToDto(ticketRepository.save(ticket));
     }

@@ -1,8 +1,10 @@
 package com.aquadrat.parkplatzverwaltung.controller;
 
 import com.aquadrat.parkplatzverwaltung.exception.NotFoundException;
+import com.aquadrat.parkplatzverwaltung.mapper.ParkingLotMapper;
 import com.aquadrat.parkplatzverwaltung.model.ParkingLot;
 import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotCreateRequest;
+import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotDto;
 import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotResponse;
 import com.aquadrat.parkplatzverwaltung.service.ParkingLotService;
 import org.springframework.http.HttpStatus;
@@ -11,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Controller
@@ -24,12 +25,12 @@ public class ParkingLotController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ParkingLot> createParkingLot(@RequestBody ParkingLotCreateRequest request) {
+    public ResponseEntity<ParkingLotDto> createParkingLot(@RequestBody ParkingLotCreateRequest request) {
         return ResponseEntity.ok(parkingLotService.createParkingLot(request));
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<ParkingLot>> getAll() {
+    public ResponseEntity<List<ParkingLotDto>> getAll() {
         return new ResponseEntity<>(parkingLotService.getAll(), HttpStatus.OK);
     }
 
@@ -37,8 +38,8 @@ public class ParkingLotController {
     public ResponseEntity<ParkingLotResponse> getParkingLotById(@PathVariable("lotID") Integer lotID) {
         ParkingLotResponse parkingLotResponse = new ParkingLotResponse();
         try {
-            ParkingLot parkingLot = parkingLotService.getParkingLotById(lotID);
-            // TODO - parkingLotResponse.set(DTO);
+            ParkingLotDto parkingLotDto = parkingLotService.getParkingLotById(lotID);
+            parkingLotResponse.setParkingLotDto(parkingLotDto);
             parkingLotResponse.setMessage(HttpStatus.OK.toString());
             parkingLotResponse.setSuccess(true);
             return ResponseEntity.ok(parkingLotResponse);

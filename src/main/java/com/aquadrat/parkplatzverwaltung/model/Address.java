@@ -21,6 +21,6 @@ public class Address {
     private String country;
     @OneToOne(mappedBy = "address")
     @JoinColumn(name = "parkinglot_id", referencedColumnName = "lotID")
-    private ParkingLot parkinglot;
+    private ParkingLot parkingLot;
 
 }
