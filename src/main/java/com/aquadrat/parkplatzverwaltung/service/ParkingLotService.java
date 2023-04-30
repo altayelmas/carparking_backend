@@ -49,10 +49,18 @@ public class ParkingLotService {
     public ParkingLotDto getParkingLotById(Integer lotID) {
         Optional<ParkingLot> parkingLot = lotRepository.findById(lotID);
         if (parkingLot.isEmpty()) {
-            // TODO - should return exception
             throw new NotFoundException("Parking Lot not found");
         }
         return parkingLotMapper.convertToDto(parkingLot.get());
+    }
+
+    public boolean deleteParkingLot(Integer lotID) {
+        Optional<ParkingLot> parkingLot = lotRepository.findById(lotID);
+        if (parkingLot.isEmpty()) {
+            return false;
+        }
+        lotRepository.deleteById(lotID);
+        return true;
     }
 
 }

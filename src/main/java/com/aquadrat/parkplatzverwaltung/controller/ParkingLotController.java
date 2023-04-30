@@ -1,8 +1,6 @@
 package com.aquadrat.parkplatzverwaltung.controller;
 
 import com.aquadrat.parkplatzverwaltung.exception.NotFoundException;
-import com.aquadrat.parkplatzverwaltung.mapper.ParkingLotMapper;
-import com.aquadrat.parkplatzverwaltung.model.ParkingLot;
 import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotCreateRequest;
 import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotDto;
 import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotResponse;
@@ -48,6 +46,15 @@ public class ParkingLotController {
             parkingLotResponse.setSuccess(false);
             return new ResponseEntity<>(parkingLotResponse, HttpStatus.NOT_FOUND);
         }
+    }
 
+    @DeleteMapping("/delete/{lotID}")
+    public ResponseEntity<Integer> deleteParkingLot(@PathVariable Integer lotID) {
+        boolean isRemoved = parkingLotService.deleteParkingLot(lotID);
+
+        if (!isRemoved) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(lotID, HttpStatus.OK);
     }
 }

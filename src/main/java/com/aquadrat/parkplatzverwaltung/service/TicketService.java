@@ -41,21 +41,20 @@ public class TicketService {
     public TicketDto createTicket(TicketCreateRequest request) {
         Ticket ticket = new Ticket();
         ticket.setEntryDate(new Date());
-        Vehicle vehicle = new Vehicle(request.getLicencePlate(), request.getVehicleType(), null);
+        Vehicle vehicle = new Vehicle(request.getLicencePlate(), request.getVehicleType(), ticket);
         ticket.setVehicle(vehicle);
         Optional<ParkingLot> parkingLot = parkingLotRepository.findById(request.getLotID());
         if (parkingLot.isEmpty()) {
-            // TODO - should return exception
             throw new NotFoundException("Parking Lot not found");
         }
         ParkingLot p = parkingLot.get();
         ticket.setParkinglot(p);
         ParkSlot parkSlot = findParkSlot(p.getParkSlots(), request.getSlotID());
-        // TODO - should check if the park slot is available, should return exception
         if (!parkSlot.isAvailable()) {
             throw new NotAvailableException("Park Slot not available");
         }
         ticket.setParkSlot(parkSlot);
+        parkSlot.setAvailable(false);
         return ticketMapper.convertToDto(ticketRepository.save(ticket));
     }
 }
