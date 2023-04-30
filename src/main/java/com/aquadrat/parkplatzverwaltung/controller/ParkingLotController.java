@@ -4,6 +4,7 @@ import com.aquadrat.parkplatzverwaltung.exception.NotFoundException;
 import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotCreateRequest;
 import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotDto;
 import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotResponse;
+import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotUpdateRequest;
 import com.aquadrat.parkplatzverwaltung.service.ParkingLotService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,5 +57,10 @@ public class ParkingLotController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(lotID, HttpStatus.OK);
+    }
+
+    @PatchMapping("/update/{lotID}")
+    public ResponseEntity<ParkingLotDto> updateParkingLot(@PathVariable Integer lotID, @RequestBody ParkingLotUpdateRequest lotUpdateRequest) {
+        return ResponseEntity.ok(parkingLotService.updateParkingLot(lotID, lotUpdateRequest));
     }
 }
