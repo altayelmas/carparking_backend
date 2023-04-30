@@ -8,9 +8,9 @@ import com.aquadrat.parkplatzverwaltung.service.TicketService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/ticket")
@@ -23,7 +23,7 @@ public class TicketController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<TicketResponse> createParkingLot(@RequestBody TicketCreateRequest request) {
+    public ResponseEntity<TicketResponse> createTicket(@RequestBody TicketCreateRequest request) {
         TicketResponse ticketResponse = new TicketResponse();
         try {
             TicketDto ticketDto = ticketService.createTicket(request);
@@ -39,4 +39,13 @@ public class TicketController {
 
     }
 
+    @GetMapping("/getAll")
+    public ResponseEntity<List<TicketDto>> getAll() {
+        return new ResponseEntity<>(ticketService.getAll(), HttpStatus.OK);
+    }
+
+    @PatchMapping("/{ticketID}")
+    public ResponseEntity<TicketDto> parkOut(@PathVariable Integer ticketID) {
+        return new ResponseEntity<>(ticketService.parkOut(ticketID), HttpStatus.OK);
+    }
 }

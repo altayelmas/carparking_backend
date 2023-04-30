@@ -57,4 +57,31 @@ public class TicketService {
         parkSlot.setAvailable(false);
         return ticketMapper.convertToDto(ticketRepository.save(ticket));
     }
+
+    public List<TicketDto> getAll() {
+        List<TicketDto> ticketDtoList = ticketMapper.ticketListToTicketDtoList(ticketRepository.findAll());
+        return ticketDtoList;
+    }
+
+    public TicketDto parkOut(Integer ticketID) {
+        Optional<Ticket> ticket = ticketRepository.findById(ticketID);
+
+        if (ticket.isEmpty()) {
+            throw new NotFoundException("Ticket not found");
+        }
+        Ticket oldTicket = ticket.get();
+
+        Ticket newTicket = Ticket.builder()
+                .ticketID(oldTicket.getTicketID())
+                .entryDate(oldTicket.getEntryDate())
+                .exitDate(new Date())
+                .vehicle(oldTicket.getVehicle())
+                .parkSlot(oldTicket.getParkSlot())
+                .parkinglot(oldTicket.getParkinglot())
+                .build();
+
+        newTicket.getParkSlot().setAvailable(true);
+
+        return ticketMapper.convertToDto(ticketRepository.save(newTicket));
+    }
 }
