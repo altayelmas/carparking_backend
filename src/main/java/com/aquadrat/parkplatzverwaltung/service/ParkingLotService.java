@@ -1,5 +1,6 @@
 package com.aquadrat.parkplatzverwaltung.service;
 
+import com.aquadrat.parkplatzverwaltung.exception.NotAvailableException;
 import com.aquadrat.parkplatzverwaltung.exception.NotFoundException;
 import com.aquadrat.parkplatzverwaltung.exception.SlotsNotEmptyException;
 import com.aquadrat.parkplatzverwaltung.mapper.ParkingLotMapper;
@@ -54,13 +55,21 @@ public class ParkingLotService {
         return parkingLotMapper.convertToDto(parkingLot.get());
     }
 
-    public boolean deleteParkingLot(Integer lotID) {
+    public ParkingLotDto deleteParkingLot(Integer lotID) {
         Optional<ParkingLot> parkingLot = lotRepository.findById(lotID);
         if (parkingLot.isEmpty()) {
-            return false;
+            throw new NotFoundException("Parking Lot not found");
+        }
+
+        ParkingLot lot = parkingLot.get();
+
+        for (ParkSlot parkSlot: lot.getParkSlots()) {
+            if (!parkSlot.isAvailable()) {
+                throw new NotAvailableException("Parking Lot is not empty");
+            }
         }
         lotRepository.deleteById(lotID);
-        return true;
+        return parkingLotMapper.convertToDto(parkingLot.get());
     }
 
     public ParkingLotDto updateParkingLot(Integer lotID, ParkingLotUpdateRequest lotUpdateRequest) {

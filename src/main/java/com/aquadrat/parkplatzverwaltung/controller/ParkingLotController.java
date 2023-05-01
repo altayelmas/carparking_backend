@@ -1,6 +1,8 @@
 package com.aquadrat.parkplatzverwaltung.controller;
 
+import com.aquadrat.parkplatzverwaltung.exception.NotAvailableException;
 import com.aquadrat.parkplatzverwaltung.exception.NotFoundException;
+import com.aquadrat.parkplatzverwaltung.exception.SlotsNotEmptyException;
 import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotCreateRequest;
 import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotDto;
 import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotResponse;
@@ -50,17 +52,42 @@ public class ParkingLotController {
     }
 
     @DeleteMapping("/delete/{lotID}")
-    public ResponseEntity<Integer> deleteParkingLot(@PathVariable Integer lotID) {
-        boolean isRemoved = parkingLotService.deleteParkingLot(lotID);
-
-        if (!isRemoved) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<ParkingLotResponse> deleteParkingLot(@PathVariable Integer lotID) {
+        ParkingLotResponse parkingLotResponse = new ParkingLotResponse();
+        try {
+            ParkingLotDto parkingLotDto = parkingLotService.deleteParkingLot(lotID);
+            parkingLotResponse.setParkingLotDto(parkingLotDto);
+            parkingLotResponse.setMessage(HttpStatus.OK.toString());
+            parkingLotResponse.setSuccess(true);
+            return ResponseEntity.ok(parkingLotResponse);
+        } catch (NotFoundException notFoundException){
+            parkingLotResponse.setMessage(notFoundException.getMessage());
+            parkingLotResponse.setSuccess(false);
+            return new ResponseEntity<>(parkingLotResponse, HttpStatus.NOT_FOUND);
+        } catch (NotAvailableException notAvailableException) {
+            parkingLotResponse.setMessage(notAvailableException.getMessage());
+            parkingLotResponse.setSuccess(false);
+            return new ResponseEntity<>(parkingLotResponse, HttpStatus.NOT_ACCEPTABLE);
         }
-        return new ResponseEntity<>(lotID, HttpStatus.OK);
     }
 
     @PatchMapping("/update/{lotID}")
-    public ResponseEntity<ParkingLotDto> updateParkingLot(@PathVariable Integer lotID, @RequestBody ParkingLotUpdateRequest lotUpdateRequest) {
-        return ResponseEntity.ok(parkingLotService.updateParkingLot(lotID, lotUpdateRequest));
+    public ResponseEntity<ParkingLotResponse> updateParkingLot(@PathVariable Integer lotID, @RequestBody ParkingLotUpdateRequest lotUpdateRequest) {
+        ParkingLotResponse parkingLotResponse = new ParkingLotResponse();
+        try {
+            ParkingLotDto parkingLotDto = parkingLotService.updateParkingLot(lotID, lotUpdateRequest);
+            parkingLotResponse.setParkingLotDto(parkingLotDto);
+            parkingLotResponse.setMessage(HttpStatus.OK.toString());
+            parkingLotResponse.setSuccess(true);
+            return ResponseEntity.ok(parkingLotResponse);
+        } catch (NotFoundException notFoundException) {
+            parkingLotResponse.setMessage(notFoundException.getMessage());
+            parkingLotResponse.setSuccess(false);
+            return new ResponseEntity<>(parkingLotResponse, HttpStatus.NOT_FOUND);
+        } catch (SlotsNotEmptyException slotsNotEmptyException) {
+            parkingLotResponse.setMessage(slotsNotEmptyException.getMessage());
+            parkingLotResponse.setSuccess(false);
+            return new ResponseEntity<>(parkingLotResponse, HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 }

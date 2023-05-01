@@ -1,6 +1,7 @@
 package com.aquadrat.parkplatzverwaltung.controller;
 
 import com.aquadrat.parkplatzverwaltung.exception.NotAvailableException;
+import com.aquadrat.parkplatzverwaltung.exception.NotFoundException;
 import com.aquadrat.parkplatzverwaltung.model.dto.TicketCreateRequest;
 import com.aquadrat.parkplatzverwaltung.model.dto.TicketDto;
 import com.aquadrat.parkplatzverwaltung.model.dto.TicketResponse;
@@ -35,6 +36,10 @@ public class TicketController {
             ticketResponse.setMessage(notAvailableException.getMessage());
             ticketResponse.setSuccess(false);
             return new ResponseEntity<>(ticketResponse, HttpStatus.NOT_ACCEPTABLE);
+        } catch (NotFoundException notFoundException) {
+            ticketResponse.setMessage(notFoundException.getMessage());
+            ticketResponse.setSuccess(false);
+            return new ResponseEntity<>(ticketResponse, HttpStatus.NOT_FOUND);
         }
 
     }
@@ -45,7 +50,18 @@ public class TicketController {
     }
 
     @PatchMapping("/{ticketID}")
-    public ResponseEntity<TicketDto> parkOut(@PathVariable Integer ticketID) {
-        return new ResponseEntity<>(ticketService.parkOut(ticketID), HttpStatus.OK);
+    public ResponseEntity<TicketResponse> parkOut(@PathVariable Integer ticketID) {
+        TicketResponse ticketResponse = new TicketResponse();
+        try {
+            TicketDto ticketDto = ticketService.parkOut(ticketID);
+            ticketResponse.setTicketDto(ticketDto);
+            ticketResponse.setMessage(HttpStatus.OK.toString());
+            ticketResponse.setSuccess(true);
+            return ResponseEntity.ok(ticketResponse);
+        } catch (NotFoundException notFoundException) {
+            ticketResponse.setMessage(notFoundException.getMessage());
+            ticketResponse.setSuccess(false);
+            return new ResponseEntity<>(ticketResponse, HttpStatus.NOT_FOUND);
+        }
     }
 }
