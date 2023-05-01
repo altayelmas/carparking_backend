@@ -85,6 +85,7 @@ public class ParkingLotService {
                 .city(lotUpdateRequest.getCity())
                 .postCode(lotUpdateRequest.getPostCode())
                 .parkingLot(updatedParkingLot)
+                .country(lotUpdateRequest.getCountry())
                 .build();
 
         updatedParkingLot.setAddress(newAddress);
