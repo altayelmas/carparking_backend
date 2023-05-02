@@ -53,6 +53,10 @@ public class TicketService {
         if (!parkSlot.isAvailable()) {
             throw new NotAvailableException("Park Slot not available");
         }
+
+        if (parkSlot == null) {
+            throw new NotFoundException("Park Slot not found");
+        }
         ticket.setParkSlot(parkSlot);
         parkSlot.setAvailable(false);
         return ticketMapper.convertToDto(ticketRepository.save(ticket));
