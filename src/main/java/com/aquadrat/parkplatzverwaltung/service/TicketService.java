@@ -50,13 +50,16 @@ public class TicketService {
         ParkingLot p = parkingLot.get();
         ticket.setParkinglot(p);
         ParkSlot parkSlot = findParkSlot(p.getParkSlots(), request.getSlotID());
-        if (!parkSlot.isAvailable()) {
-            throw new NotAvailableException("Park Slot not available");
-        }
 
         if (parkSlot == null) {
             throw new NotFoundException("Park Slot not found");
         }
+
+        if (!parkSlot.isAvailable()) {
+            throw new NotAvailableException("Park Slot not available");
+        }
+
+
         ticket.setParkSlot(parkSlot);
         parkSlot.setAvailable(false);
         return ticketMapper.convertToDto(ticketRepository.save(ticket));
