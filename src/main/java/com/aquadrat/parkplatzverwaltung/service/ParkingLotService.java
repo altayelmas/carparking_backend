@@ -68,6 +68,11 @@ public class ParkingLotService {
                 throw new NotAvailableException("Parking Lot is not empty");
             }
         }
+
+        // TODO - Not working
+        if (!lot.getTickets().isEmpty()) {
+            throw new NotAvailableException("This Parking Lot has tickets");
+        }
         lotRepository.deleteById(lotID);
         return parkingLotMapper.convertToDto(parkingLot.get());
     }

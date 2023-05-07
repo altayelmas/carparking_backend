@@ -19,11 +19,29 @@ public class Ticket {
     private Integer ticketID;
     private Date entryDate;
     private Date exitDate;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private boolean isValid;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "licence_plate", referencedColumnName = "licencePlate")
     private Vehicle vehicle;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private ParkSlot parkSlot;
     @ManyToOne
     @JoinColumn(name = "parkinglot_id", referencedColumnName = "lotID")
     private ParkingLot parkinglot;
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+        // TODO - Obje castına gerek var mı?
+        if (this.getTicketID().equals(((Ticket) obj).getTicketID())) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -8,4 +8,7 @@ import java.util.List;
 
 public interface TicketRepository extends JpaRepository<Ticket, Integer> {
     List<Ticket> findAll();
+    Ticket findTicketByVehicleAndIsValid(Vehicle vehicle, boolean isValid);
+
+    List<Ticket> findAllByIsValid(boolean valid);
 }

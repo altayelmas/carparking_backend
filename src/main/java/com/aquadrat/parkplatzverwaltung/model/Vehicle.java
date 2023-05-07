@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -18,8 +20,26 @@ public class Vehicle {
     private String licencePlate;
     @Enumerated
     private VehicleType vehicleType;
-    @OneToOne
-    @JoinColumn(name = "ticket_id", referencedColumnName = "ticketID")
-    private Ticket ticket;
+    @OneToMany
+    private List<Ticket> ticketList;
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        if (this.getLicencePlate().equals(((Vehicle) obj).getLicencePlate())) {
+            return true;
+        }
+        return false;
+    }
+
+    public Vehicle(String licencePlate) {
+        this.licencePlate = licencePlate;
+    }
 }

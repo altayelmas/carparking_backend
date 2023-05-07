@@ -15,6 +15,7 @@ public class TicketMapper {
                 .slotID(ticket.getParkSlot().getSlotID())
                 .entryDate(ticket.getEntryDate())
                 .exitDate(ticket.getExitDate())
+                .isValid(ticket.isValid())
                 .licencePlate(ticket.getVehicle().getLicencePlate())
                 .lotID(ticket.getParkinglot().getLotID())
                 .build();

@@ -11,8 +11,10 @@ import com.aquadrat.parkplatzverwaltung.model.dto.TicketCreateRequest;
 import com.aquadrat.parkplatzverwaltung.model.dto.TicketDto;
 import com.aquadrat.parkplatzverwaltung.repository.ParkingLotRepository;
 import com.aquadrat.parkplatzverwaltung.repository.TicketRepository;
+import com.aquadrat.parkplatzverwaltung.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -22,11 +24,13 @@ public class TicketService {
 
     private final TicketRepository ticketRepository;
     private final ParkingLotRepository parkingLotRepository;
+    private final VehicleRepository vehicleRepository;
     private final TicketMapper ticketMapper;
 
-    public TicketService(TicketRepository ticketRepository, ParkingLotRepository parkingLotRepository, TicketMapper ticketMapper) {
+    public TicketService(TicketRepository ticketRepository, ParkingLotRepository parkingLotRepository, VehicleRepository vehicleRepository, TicketMapper ticketMapper) {
         this.ticketRepository = ticketRepository;
         this.parkingLotRepository = parkingLotRepository;
+        this.vehicleRepository = vehicleRepository;
         this.ticketMapper = ticketMapper;
     }
 
@@ -41,8 +45,6 @@ public class TicketService {
     public TicketDto createTicket(TicketCreateRequest request) {
         Ticket ticket = new Ticket();
         ticket.setEntryDate(new Date());
-        Vehicle vehicle = new Vehicle(request.getLicencePlate(), request.getVehicleType(), ticket);
-        ticket.setVehicle(vehicle);
         Optional<ParkingLot> parkingLot = parkingLotRepository.findById(request.getLotID());
         if (parkingLot.isEmpty()) {
             throw new NotFoundException("Parking Lot not found");
@@ -59,10 +61,28 @@ public class TicketService {
             throw new NotAvailableException("Park Slot not available");
         }
 
+        Optional<Vehicle> maybeVehicle = vehicleRepository.findById(request.getLicencePlate());
+        Vehicle vehicle;
+        if (maybeVehicle.isPresent()) {
+            vehicle = maybeVehicle.get();
+        } else {
+            vehicle = new Vehicle(request.getLicencePlate(), request.getVehicleType(), new ArrayList<>());
+        }
+
+        Ticket ticketOfVehicle = ticketRepository.findTicketByVehicleAndIsValid(vehicle, true);
+
+        if (ticketOfVehicle != null) {
+            throw new NotAvailableException("This vehicle is already in Parking Lot");
+        }
 
         ticket.setParkSlot(parkSlot);
+        ticket.setValid(true);
+        vehicle.getTicketList().add(ticket);
+        ticket.setVehicle(vehicle);
         parkSlot.setAvailable(false);
-        return ticketMapper.convertToDto(ticketRepository.save(ticket));
+        TicketDto ticketDto = ticketMapper.convertToDto(ticketRepository.save(ticket));
+        vehicleRepository.save(vehicle);
+        return ticketDto;
     }
 
     public List<TicketDto> getAll() {
@@ -82,12 +102,17 @@ public class TicketService {
                 .ticketID(oldTicket.getTicketID())
                 .entryDate(oldTicket.getEntryDate())
                 .exitDate(new Date())
+                .isValid(false)
                 .vehicle(oldTicket.getVehicle())
                 .parkSlot(oldTicket.getParkSlot())
                 .parkinglot(oldTicket.getParkinglot())
                 .build();
 
         newTicket.getParkSlot().setAvailable(true);
+
+        // TODO - Control the codes that uses the vehicle class
+        newTicket.getVehicle().getTicketList().remove(oldTicket);
+        newTicket.getVehicle().getTicketList().add(newTicket);
 
         return ticketMapper.convertToDto(ticketRepository.save(newTicket));
     }

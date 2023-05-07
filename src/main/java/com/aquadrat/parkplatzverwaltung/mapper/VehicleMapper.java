@@ -11,7 +11,7 @@ public class VehicleMapper {
         return VehicleDto.builder()
                 .licencePlate(vehicle.getLicencePlate())
                 .vehicleType(vehicle.getVehicleType())
-                .ticketID(vehicle.getTicket().getTicketID())
+                .ticketID(vehicle.getTicketList().get(vehicle.getTicketList().size() - 1).getTicketID())
                 .build();
     }
 }

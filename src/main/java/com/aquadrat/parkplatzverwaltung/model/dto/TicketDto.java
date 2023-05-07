@@ -14,6 +14,7 @@ public class TicketDto {
     private Integer ticketID;
     private Date entryDate;
     private Date exitDate;
+    private boolean isValid;
     private String licencePlate;
     private Integer slotID;
     private Integer lotID;
