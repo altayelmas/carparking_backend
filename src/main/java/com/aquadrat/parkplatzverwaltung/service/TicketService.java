@@ -80,6 +80,7 @@ public class TicketService {
         vehicle.getTicketList().add(ticket);
         ticket.setVehicle(vehicle);
         parkSlot.setAvailable(false);
+        p.getTickets().add(ticket);
         TicketDto ticketDto = ticketMapper.convertToDto(ticketRepository.save(ticket));
         vehicleRepository.save(vehicle);
         return ticketDto;

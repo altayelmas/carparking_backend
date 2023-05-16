@@ -73,7 +73,6 @@ public class ParkingLotService {
             }
         }
 
-        // TODO - Not working
         if (!lot.getTickets().isEmpty()) {
             throw new NotAvailableException("This Parking Lot has tickets");
         }
