@@ -7,10 +7,12 @@ import com.aquadrat.parkplatzverwaltung.mapper.ParkingLotMapper;
 import com.aquadrat.parkplatzverwaltung.model.Address;
 import com.aquadrat.parkplatzverwaltung.model.ParkingLot;
 import com.aquadrat.parkplatzverwaltung.model.ParkSlot;
+import com.aquadrat.parkplatzverwaltung.model.Ticket;
 import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotCreateRequest;
 import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotDto;
 import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotUpdateRequest;
 import com.aquadrat.parkplatzverwaltung.repository.ParkingLotRepository;
+import com.aquadrat.parkplatzverwaltung.repository.TicketRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,10 +24,12 @@ public class ParkingLotService {
 
     private final ParkingLotRepository lotRepository;
     private final ParkingLotMapper parkingLotMapper;
+    private final TicketRepository ticketRepository;
 
-    public ParkingLotService(ParkingLotRepository lotRepository, ParkingLotMapper parkingLotMapper) {
+    public ParkingLotService(ParkingLotRepository lotRepository, ParkingLotMapper parkingLotMapper, TicketRepository ticketRepository) {
         this.lotRepository = lotRepository;
         this.parkingLotMapper = parkingLotMapper;
+        this.ticketRepository = ticketRepository;
     }
     public ParkingLotDto createParkingLot(ParkingLotCreateRequest request) {
         ParkingLot parkingLot = new ParkingLot();
@@ -78,6 +82,7 @@ public class ParkingLotService {
     }
 
     public ParkingLotDto updateParkingLot(Integer lotID, ParkingLotUpdateRequest lotUpdateRequest) {
+        // TODO - Throw exception if there are tickets associated with park slots
         Optional<ParkingLot> parkingLot = lotRepository.findById(lotID);
 
         if (parkingLot.isEmpty()) {
@@ -109,6 +114,10 @@ public class ParkingLotService {
             for (int i = currentSize - 1; i >= lotUpdateRequest.getNumberOfSlots(); i--) {
                 if (!updatedParkingLot.getParkSlots().get(i).isAvailable()) {
                     throw new SlotsNotEmptyException("Park Slots are not empty");
+                }
+                List<Ticket> ticketList = ticketRepository.findTicketsByParkSlot(updatedParkingLot.getParkSlots().get(i));
+                if (!ticketList.isEmpty()) {
+                    throw new NotAvailableException("There are tickets associated with this slots.");
                 }
             }
 

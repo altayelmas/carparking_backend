@@ -88,6 +88,10 @@ public class ParkingLotController {
             parkingLotResponse.setMessage(slotsNotEmptyException.getMessage());
             parkingLotResponse.setSuccess(false);
             return new ResponseEntity<>(parkingLotResponse, HttpStatus.NOT_ACCEPTABLE);
+        } catch (NotAvailableException notAvailableException) {
+            parkingLotResponse.setMessage(notAvailableException.getMessage());
+            parkingLotResponse.setSuccess(false);
+            return new ResponseEntity<>(parkingLotResponse, HttpStatus.NOT_ACCEPTABLE);
         }
     }
 }

@@ -25,4 +25,20 @@ public class ParkSlot {
     @JoinColumn(name = "ticket_id", referencedColumnName = "ticketID")
     private Ticket ticket;
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        if (this.getSlotID() == ((ParkSlot) obj).getSlotID()) {
+            return true;
+        }
+        return false;
+    }
+
 }

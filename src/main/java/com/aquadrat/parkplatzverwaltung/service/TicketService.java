@@ -98,6 +98,10 @@ public class TicketService {
         }
         Ticket oldTicket = ticket.get();
 
+        if (!oldTicket.isValid()) {
+            throw new NotAvailableException("This ticket is not valid.");
+        }
+
         Ticket newTicket = Ticket.builder()
                 .ticketID(oldTicket.getTicketID())
                 .entryDate(oldTicket.getEntryDate())
