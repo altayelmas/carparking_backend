@@ -82,7 +82,6 @@ public class ParkingLotService {
     }
 
     public ParkingLotDto updateParkingLot(Integer lotID, ParkingLotUpdateRequest lotUpdateRequest) {
-        // TODO - Throw exception if there are tickets associated with park slots
         Optional<ParkingLot> parkingLot = lotRepository.findById(lotID);
 
         if (parkingLot.isEmpty()) {
