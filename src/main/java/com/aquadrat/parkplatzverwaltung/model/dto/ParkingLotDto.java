@@ -26,7 +26,7 @@ public class ParkingLotDto {
         }
         ParkingLotDto parkingLotDto = (ParkingLotDto) obj;
 
-        if (this.lotID == parkingLotDto.getLotID() && this.name.equals(parkingLotDto.getName()) && this.addressDto.equals(parkingLotDto.getAddressDto()) && this.parkSlotDtoList.equals(parkingLotDto.getParkSlotDtoList())) {
+        if (this.lotID == parkingLotDto.getLotID() && this.name.equals(parkingLotDto.getName()) && this.addressDto.equals(parkingLotDto.getAddressDto())) {
             return true;
         }
         return false;

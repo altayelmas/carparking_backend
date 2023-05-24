@@ -115,7 +115,6 @@ public class TicketService {
 
         newTicket.getParkSlot().setAvailable(true);
 
-        // TODO - Control the codes that uses the vehicle class
         newTicket.getVehicle().getTicketList().remove(oldTicket);
         newTicket.getVehicle().getTicketList().add(newTicket);
 

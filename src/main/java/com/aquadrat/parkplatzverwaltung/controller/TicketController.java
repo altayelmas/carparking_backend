@@ -6,7 +6,6 @@ import com.aquadrat.parkplatzverwaltung.model.dto.TicketCreateRequest;
 import com.aquadrat.parkplatzverwaltung.model.dto.TicketDto;
 import com.aquadrat.parkplatzverwaltung.model.dto.TicketResponse;
 import com.aquadrat.parkplatzverwaltung.service.TicketService;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

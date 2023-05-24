@@ -1,12 +1,11 @@
-package com.aquadrat.parkplatzverwaltung.service.service;
+package com.aquadrat.parkplatzverwaltung.service;
 
 import com.aquadrat.parkplatzverwaltung.mapper.VehicleMapper;
 import com.aquadrat.parkplatzverwaltung.model.*;
 import com.aquadrat.parkplatzverwaltung.model.dto.VehicleDto;
 import com.aquadrat.parkplatzverwaltung.model.enums.VehicleType;
 import com.aquadrat.parkplatzverwaltung.repository.VehicleRepository;
-import com.aquadrat.parkplatzverwaltung.service.VehicleService;
-import com.aquadrat.parkplatzverwaltung.service.support.ParkingLotTestSupport;
+import com.aquadrat.parkplatzverwaltung.support.ParkingLotTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

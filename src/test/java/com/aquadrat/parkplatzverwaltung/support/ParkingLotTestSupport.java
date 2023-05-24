@@ -1,4 +1,4 @@
-package com.aquadrat.parkplatzverwaltung.service.support;
+package com.aquadrat.parkplatzverwaltung.support;
 
 import com.aquadrat.parkplatzverwaltung.model.Address;
 import com.aquadrat.parkplatzverwaltung.model.ParkSlot;
@@ -32,6 +32,7 @@ public class ParkingLotTestSupport {
         }
         parkingLot.setParkSlots(parkSlotList);
         parkingLot.getAddress().setParkingLot(parkingLot);
+        parkingLot.setTickets(new ArrayList<>());
         return parkingLot;
     }
 }

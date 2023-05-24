@@ -1,10 +1,9 @@
-package com.aquadrat.parkplatzverwaltung.service.mapper;
+package com.aquadrat.parkplatzverwaltung.mapper;
 
-import com.aquadrat.parkplatzverwaltung.mapper.AddressMapper;
 import com.aquadrat.parkplatzverwaltung.model.Address;
 import com.aquadrat.parkplatzverwaltung.model.ParkingLot;
 import com.aquadrat.parkplatzverwaltung.model.dto.AddressDto;
-import com.aquadrat.parkplatzverwaltung.service.support.ParkingLotTestSupport;
+import com.aquadrat.parkplatzverwaltung.support.ParkingLotTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
