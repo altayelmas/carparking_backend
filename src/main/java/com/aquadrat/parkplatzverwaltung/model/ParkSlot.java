@@ -2,14 +2,12 @@ package com.aquadrat.parkplatzverwaltung.model;
 
 import com.aquadrat.parkplatzverwaltung.repository.TicketRepository;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ParkSlot {
