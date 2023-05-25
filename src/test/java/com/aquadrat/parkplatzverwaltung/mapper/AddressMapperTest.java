@@ -22,23 +22,10 @@ public class AddressMapperTest {
     public void convertToDtoTest() {
         ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(1);
         Address address = parkingLot.getAddress();
-        AddressDto addressDto = getAddressDto();
+        AddressDto addressDto = ParkingLotTestSupport.generateAddressDto();
 
         AddressDto result = addressMapper.convertToDto(address);
         assertEquals(addressDto, result);
-    }
-
-    private AddressDto getAddressDto() {
-        AddressDto addressDto = AddressDto.builder()
-                .addressID(1)
-                .street("TestStreet")
-                .city("TestCity")
-                .postCode("TestPostCode")
-                .country("TestCountry")
-                .lotID(1)
-                .build();
-
-        return addressDto;
     }
 
 

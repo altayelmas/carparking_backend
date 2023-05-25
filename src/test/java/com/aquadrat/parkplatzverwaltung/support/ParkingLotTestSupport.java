@@ -3,6 +3,10 @@ package com.aquadrat.parkplatzverwaltung.support;
 import com.aquadrat.parkplatzverwaltung.model.Address;
 import com.aquadrat.parkplatzverwaltung.model.ParkSlot;
 import com.aquadrat.parkplatzverwaltung.model.ParkingLot;
+import com.aquadrat.parkplatzverwaltung.model.dto.AddressDto;
+import com.aquadrat.parkplatzverwaltung.model.dto.ParkSlotDto;
+import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotCreateRequest;
+import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,5 +38,129 @@ public class ParkingLotTestSupport {
         parkingLot.getAddress().setParkingLot(parkingLot);
         parkingLot.setTickets(new ArrayList<>());
         return parkingLot;
+    }
+
+    public static ParkingLotDto generateParkingLotDto(int lotID) {
+        ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(lotID);
+
+        AddressDto addressDto = AddressDto.builder()
+                .addressID(parkingLot.getAddress().getAddressID())
+                .street(parkingLot.getAddress().getStreet())
+                .city(parkingLot.getAddress().getCity())
+                .postCode(parkingLot.getAddress().getPostCode())
+                .country(parkingLot.getAddress().getCountry())
+                .lotID(parkingLot.getLotID())
+                .build();
+
+        List<ParkSlotDto> parkSlotDtoList = generateParkSlotDtoList();
+
+        return ParkingLotDto.builder()
+                .lotID(parkingLot.getLotID())
+                .name(parkingLot.getName())
+                .addressDto(addressDto)
+                .parkSlotDtoList(parkSlotDtoList)
+                .build();
+    }
+
+    public static List<ParkingLot> generateParkingLotList(int count) {
+        List<ParkingLot> parkingLotList = new ArrayList<>();
+
+        for (int i = 0; i < count; i++) {
+            parkingLotList.add(ParkingLotTestSupport.generateParkingLot(i));
+        }
+        return parkingLotList;
+    }
+
+    public static List<ParkingLotDto> generateParkingLotDtoList(int count) {
+        List<ParkingLotDto> parkingLotDtoList = new ArrayList<>();
+        List<ParkingLot> parkingLotList = new ArrayList<>();
+
+        for (int i = 0; i < count; i++) {
+            parkingLotList.add(ParkingLotTestSupport.generateParkingLot(i));
+        }
+
+        for (int i = 0; i < count; i++) {
+
+            AddressDto addressDto = AddressDto.builder()
+                    .addressID(parkingLotList.get(i).getAddress().getAddressID())
+                    .street(parkingLotList.get(i).getAddress().getStreet())
+                    .city(parkingLotList.get(i).getAddress().getCity())
+                    .postCode(parkingLotList.get(i).getAddress().getPostCode())
+                    .country(parkingLotList.get(i).getAddress().getCountry())
+                    .lotID(1)
+                    .build();
+
+            List<ParkSlotDto> parkSlotDtoList = new ArrayList<>();
+            for (ParkSlot parkSlot : parkingLotList.get(i).getParkSlots()) {
+                parkSlotDtoList.add(ParkSlotDto.builder()
+                        .slotID(parkSlot.getSlotID())
+                        .isAvailable(true)
+                        .lotID(i)
+                        .build());
+            }
+
+            parkingLotDtoList.add(ParkingLotDto.builder()
+                    .lotID(parkingLotList.get(i).getLotID())
+                    .name(parkingLotList.get(i).getName())
+                    .addressDto(addressDto)
+                    .parkSlotDtoList(parkSlotDtoList)
+                    .build());
+        }
+        return parkingLotDtoList;
+    }
+
+    public static ParkSlot generateParkSlot() {
+        ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(1);
+        return parkingLot.getParkSlots().get(5);
+    }
+
+    public static ParkSlotDto generateParkSlotDto() {
+        ParkSlotDto parkSlotDto = ParkSlotDto.builder()
+                .slotID(5)
+                .isAvailable(true)
+                .lotID(1)
+                .build();
+        return parkSlotDto;
+    }
+
+    public static List<ParkSlot> generateParkSlotList() {
+        ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(1);
+        return parkingLot.getParkSlots();
+    }
+
+    public static List<ParkSlotDto> generateParkSlotDtoList() {
+        ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(1);
+        List<ParkSlot> parkSlotList = parkingLot.getParkSlots();
+        List<ParkSlotDto> parkSlotDtoList = new ArrayList<>();
+
+        for (ParkSlot parkSlot : parkSlotList) {
+            parkSlotDtoList.add(ParkSlotDto.builder()
+                    .slotID(parkSlot.getSlotID())
+                    .isAvailable(true)
+                    .lotID(1)
+                    .build());
+        }
+        return parkSlotDtoList;
+    }
+    public static AddressDto generateAddressDto() {
+        return AddressDto.builder()
+                .addressID(1)
+                .street("TestStreet")
+                .city("TestCity")
+                .postCode("TestPostCode")
+                .country("TestCountry")
+                .lotID(1)
+                .build();
+    }
+
+    public static ParkingLotCreateRequest generateParkingLotCreateRequest() {
+        return ParkingLotCreateRequest.builder()
+                .name("TestParkingLot")
+                .street("TestStreet")
+                .city("TestCity")
+                .postCode("TestPostCode")
+                .country("TestCountry")
+                .numberOfSlots(50)
+                .build();
     }
 }

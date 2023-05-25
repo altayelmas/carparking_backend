@@ -13,6 +13,8 @@ import com.aquadrat.parkplatzverwaltung.repository.ParkingLotRepository;
 import com.aquadrat.parkplatzverwaltung.repository.TicketRepository;
 import com.aquadrat.parkplatzverwaltung.repository.VehicleRepository;
 import com.aquadrat.parkplatzverwaltung.support.ParkingLotTestSupport;
+import com.aquadrat.parkplatzverwaltung.support.TicketTestSupport;
+import com.aquadrat.parkplatzverwaltung.support.VehicleTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -45,8 +47,8 @@ public class TicketServiceTest {
 
     @Test
     public void getAllTest() {
-        List<Ticket> ticketList = getTicketList();
-        List<TicketDto> ticketDtoList = getTicketDtoList();
+        List<Ticket> ticketList = TicketTestSupport.generateTicketList(3);
+        List<TicketDto> ticketDtoList = TicketTestSupport.generateTicketDtoList(3);
         when(ticketRepository.findAll()).thenReturn(ticketList);
         when(ticketMapper.ticketListToTicketDtoList(ticketList)).thenReturn(ticketDtoList);
 
@@ -59,7 +61,7 @@ public class TicketServiceTest {
 
     @Test
     public void createTicketTest_whenParkingLotDoesNotExist_shouldThrowNotFoundException() {
-        TicketCreateRequest ticketCreateRequest = getTicketCreateRequest();
+        TicketCreateRequest ticketCreateRequest = TicketTestSupport.generateTicketCreateRequest();
         when(parkingLotRepository.findById(5)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> ticketService.createTicket(ticketCreateRequest));
@@ -69,7 +71,7 @@ public class TicketServiceTest {
 
     @Test
     public void createTicketTest_whenParkSlotDoesNotExist_shouldThrowNotFoundException() {
-        TicketCreateRequest ticketCreateRequest = getTicketCreateRequest();
+        TicketCreateRequest ticketCreateRequest = TicketTestSupport.generateTicketCreateRequest();
         ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(5);
         when(parkingLotRepository.findById(5)).thenReturn(Optional.of(parkingLot));
         assertThrows(NotFoundException.class, () -> ticketService.createTicket(ticketCreateRequest));
@@ -78,7 +80,7 @@ public class TicketServiceTest {
 
     @Test
     public void createTicketTest_whenParkSlotIsNotAvailable_shouldThrowNotAvailableException() {
-        TicketCreateRequest ticketCreateRequest = getTicketCreateRequest();
+        TicketCreateRequest ticketCreateRequest = TicketTestSupport.generateTicketCreateRequest();
         ticketCreateRequest.setSlotID(15);
         ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(5);
         parkingLot.getParkSlots().get(15).setAvailable(false);
@@ -90,8 +92,8 @@ public class TicketServiceTest {
 
     @Test
     public void createTicketTest_whenVehicleIsAlreadyInParkingLot_shouldThrowNotAvailableException() {
-        Vehicle vehicle = getVehicle();
-        TicketCreateRequest ticketCreateRequest = getTicketCreateRequest();
+        Vehicle vehicle = VehicleTestSupport.generateVehicle();
+        TicketCreateRequest ticketCreateRequest = TicketTestSupport.generateTicketCreateRequest();
         ticketCreateRequest.setSlotID(15);
         ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(5);
         parkingLot.getParkSlots().get(3).setAvailable(false);
@@ -104,12 +106,15 @@ public class TicketServiceTest {
 
     @Test
     public void createTicketTest() {
-        TicketCreateRequest ticketCreateRequest = getTicketCreateRequest();
+        TicketCreateRequest ticketCreateRequest = TicketTestSupport.generateTicketCreateRequest();
         ticketCreateRequest.setSlotID(15);
-        Vehicle vehicle = getVehicle();
+        Vehicle vehicle = VehicleTestSupport.generateVehicle();
         ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(5);
-        TicketDto ticketDto = getTicketDto();
-        Ticket ticket = getTicket();
+        TicketDto ticketDto = TicketTestSupport.generateTicketDto(3);
+        ticketDto.setSlotID(15);
+        ticketDto.setLotID(5);
+        Ticket ticket = TicketTestSupport.generateTicket(3);
+        ticket.setParkSlot(parkingLot.getParkSlots().get(15));
         when(parkingLotRepository.findById(5)).thenReturn(Optional.of(parkingLot));
         when(vehicleRepository.findById(vehicle.getLicencePlate())).thenReturn(Optional.of(vehicle));
         when(ticketRepository.findTicketByVehicleAndIsValid(vehicle, true)).thenReturn(null);
@@ -118,120 +123,5 @@ public class TicketServiceTest {
 
         TicketDto result = ticketService.createTicket(ticketCreateRequest);
         assertEquals(ticketDto, result);
-    }
-
-    public List<Ticket> getTicketList() {
-        List<Ticket> ticketList = new ArrayList<>();
-
-        Vehicle vehicle = Vehicle.builder()
-                .licencePlate("ABC" + 1)
-                .vehicleType(VehicleType.AUTO)
-                .build();
-
-        ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(1);
-
-        for (int i = 0; i < 3; i++) {
-            ticketList.add(Ticket.builder()
-                    .ticketID(i)
-                    .entryDate(new Date())
-                    .exitDate(new Date())
-                    .isValid(true)
-                    .vehicle(vehicle)
-                    .parkSlot(parkingLot.getParkSlots().get(1))
-                    .parkinglot(parkingLot)
-                    .build());
-        }
-        return ticketList;
-    }
-
-    public List<TicketDto> getTicketDtoList() {
-        List<TicketDto> ticketDtoList = new ArrayList<>();
-
-        for (int i = 0; i < 3; i++) {
-            ticketDtoList.add(TicketDto.builder()
-                    .ticketID(i)
-                    .entryDate(new Date())
-                    .exitDate(new Date())
-                    .isValid(true)
-                    .licencePlate("ABC" + 1)
-                    .slotID(1)
-                    .lotID(1)
-                    .build());
-        }
-        return ticketDtoList;
-    }
-
-    public TicketCreateRequest getTicketCreateRequest() {
-        return TicketCreateRequest.builder()
-                .licencePlate("ABC" + 1)
-                .vehicleType(VehicleType.AUTO)
-                .lotID(5)
-                .slotID(55)
-                .build();
-    }
-
-    public Vehicle getVehicle() {
-        Vehicle vehicle = Vehicle.builder()
-                .licencePlate("ABC1")
-                .vehicleType(VehicleType.AUTO)
-                .build();
-
-        ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(5);
-
-        List<Ticket> ticketList = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            ticketList.add(Ticket.builder()
-                    .ticketID(i)
-                    .entryDate(new Date())
-                    .exitDate(new Date())
-                    .isValid(false)
-                    .vehicle(vehicle)
-                    .parkSlot(parkingLot.getParkSlots().get(i))
-                    .parkinglot(parkingLot)
-                    .build());
-        }
-        ticketList.add(Ticket.builder()
-                .ticketID(3)
-                .entryDate(new Date())
-                .exitDate(new Date())
-                .isValid(true)
-                .vehicle(vehicle)
-                .parkSlot(parkingLot.getParkSlots().get(3))
-                .parkinglot(parkingLot)
-                .build());
-
-        vehicle.setTicketList(ticketList);
-        return vehicle;
-    }
-
-    public TicketDto getTicketDto() {
-        return TicketDto.builder()
-                .ticketID(3)
-                .entryDate(new Date())
-                .exitDate(new Date())
-                .isValid(true)
-                .licencePlate("ABC" + 1)
-                .slotID(15)
-                .lotID(5)
-                .build();
-    }
-
-    public Ticket getTicket() {
-        Vehicle vehicle = Vehicle.builder()
-                .licencePlate("ABC" + 1)
-                .vehicleType(VehicleType.AUTO)
-                .build();
-
-        ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(5);
-
-        return Ticket.builder()
-                //.ticketID(3)
-                .entryDate(new Date())
-                .exitDate(new Date())
-                .isValid(true)
-                .vehicle(vehicle)
-                .parkSlot(parkingLot.getParkSlots().get(15))
-                .parkinglot(parkingLot)
-                .build();
     }
 }

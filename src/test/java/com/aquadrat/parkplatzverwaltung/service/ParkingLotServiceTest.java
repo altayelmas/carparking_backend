@@ -37,9 +37,9 @@ public class ParkingLotServiceTest {
 
     @Test
     public void createParkingLotTest() {
-        ParkingLotCreateRequest parkingLotCreateRequest = parkingLotCreateRequest();
+        ParkingLotCreateRequest parkingLotCreateRequest = ParkingLotTestSupport.generateParkingLotCreateRequest();
         ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(1);
-        ParkingLotDto parkingLotDto = getParkingLotDto();
+        ParkingLotDto parkingLotDto = ParkingLotTestSupport.generateParkingLotDto(1);
         when(parkingLotMapper.convertToDto(parkingLot)).thenReturn(parkingLotDto);
         when(parkingLotRepository.save(any())).thenReturn(parkingLot);
 
@@ -47,47 +47,4 @@ public class ParkingLotServiceTest {
         assertEquals(parkingLotDto, result);
         verify(parkingLotMapper).convertToDto(parkingLot);
     }
-
-    public ParkingLotCreateRequest parkingLotCreateRequest() {
-        return ParkingLotCreateRequest.builder()
-                .name("TestParkingLot")
-                .street("TestStreet")
-                .city("TestCity")
-                .postCode("TestPostCode")
-                .country("TestCountry")
-                .numberOfSlots(50)
-                .build();
-    }
-
-    public ParkingLotDto getParkingLotDto() {
-        ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(1);
-
-        AddressDto addressDto = AddressDto.builder()
-                .addressID(parkingLot.getAddress().getAddressID())
-                .street(parkingLot.getAddress().getStreet())
-                .city(parkingLot.getAddress().getCity())
-                .postCode(parkingLot.getAddress().getPostCode())
-                .country(parkingLot.getAddress().getCountry())
-                .lotID(parkingLot.getLotID())
-                .build();
-
-        List<ParkSlotDto> parkSlotDtoList = new ArrayList<>();
-
-        for (ParkSlot parkSlot : parkingLot.getParkSlots()) {
-            parkSlotDtoList.add(ParkSlotDto.builder()
-                    .slotID(parkSlot.getSlotID())
-                    .isAvailable(true)
-                    .lotID(1)
-                    .build());
-        }
-
-        return ParkingLotDto.builder()
-                .lotID(parkingLot.getLotID())
-                .name(parkingLot.getName())
-                .addressDto(addressDto)
-                .parkSlotDtoList(parkSlotDtoList)
-                .build();
-    }
-
-
 }

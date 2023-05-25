@@ -1,16 +1,10 @@
 package com.aquadrat.parkplatzverwaltung.mapper;
 
-import com.aquadrat.parkplatzverwaltung.model.ParkingLot;
 import com.aquadrat.parkplatzverwaltung.model.Ticket;
-import com.aquadrat.parkplatzverwaltung.model.Vehicle;
 import com.aquadrat.parkplatzverwaltung.model.dto.TicketDto;
-import com.aquadrat.parkplatzverwaltung.model.enums.VehicleType;
-import com.aquadrat.parkplatzverwaltung.support.ParkingLotTestSupport;
+import com.aquadrat.parkplatzverwaltung.support.TicketTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,8 +20,8 @@ public class TicketMapperTest {
 
     @Test
     public void convertToDtoTest() {
-        Ticket ticket = getTicket();
-        TicketDto ticketDto = getTicketDto();
+        Ticket ticket = TicketTestSupport.generateTicket(1);
+        TicketDto ticketDto = TicketTestSupport.generateTicketDto(1);
 
         TicketDto result = ticketMapper.convertToDto(ticket);
         assertEquals(ticketDto, result);
@@ -35,84 +29,10 @@ public class TicketMapperTest {
 
     @Test
     public void ticketListToTicketDtoListTest() {
-        List<Ticket> ticketList = getTicketList();
-        List<TicketDto> ticketDtoList = getTicketDtoList();
+        List<Ticket> ticketList = TicketTestSupport.generateTicketList(3);
+        List<TicketDto> ticketDtoList = TicketTestSupport.generateTicketDtoList(3);
 
         List<TicketDto> result = ticketMapper.ticketListToTicketDtoList(ticketList);
         assertEquals(ticketDtoList, result);
-    }
-
-    public Ticket getTicket() {
-        Vehicle vehicle = Vehicle.builder()
-                .licencePlate("ABC" + 1)
-                .vehicleType(VehicleType.AUTO)
-                .build();
-
-        ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(1);
-
-        return Ticket.builder()
-                .ticketID(1)
-                .entryDate(new Date())
-                .exitDate(new Date())
-                .isValid(true)
-                .vehicle(vehicle)
-                .parkSlot(parkingLot.getParkSlots().get(1))
-                .parkinglot(parkingLot)
-                .build();
-    }
-
-    public TicketDto getTicketDto() {
-        return TicketDto.builder()
-                .ticketID(1)
-                .entryDate(new Date())
-                .exitDate(new Date())
-                .isValid(true)
-                .licencePlate("ABC" + 1)
-                .slotID(1)
-                .lotID(1)
-                .build();
-    }
-
-    public List<Ticket> getTicketList() {
-        List<Ticket> ticketList = new ArrayList<>();
-
-        Vehicle vehicle = Vehicle.builder()
-                .licencePlate("ABC" + 1)
-                .vehicleType(VehicleType.AUTO)
-                .build();
-
-        ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(1);
-
-        for (int i = 0; i < 3; i++) {
-            ticketList.add(Ticket.builder()
-                    .ticketID(i)
-                    .entryDate(new Date())
-                    .exitDate(new Date())
-                    .isValid(true)
-                    .vehicle(vehicle)
-                    .parkSlot(parkingLot.getParkSlots().get(1))
-                    .parkinglot(parkingLot)
-                    .build());
-        }
-
-        return ticketList;
-    }
-
-    public List<TicketDto> getTicketDtoList() {
-        List<TicketDto> ticketDtoList = new ArrayList<>();
-
-        for (int i = 0; i < 3; i++) {
-            ticketDtoList.add(TicketDto.builder()
-                    .ticketID(i)
-                    .entryDate(new Date())
-                    .exitDate(new Date())
-                    .isValid(true)
-                    .licencePlate("ABC" + 1)
-                    .slotID(1)
-                    .lotID(1)
-                    .build());
-        }
-        return ticketDtoList;
-
     }
 }
