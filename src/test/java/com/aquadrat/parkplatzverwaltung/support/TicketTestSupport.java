@@ -17,11 +17,12 @@ public class TicketTestSupport {
         Vehicle vehicle = Vehicle.builder()
                 .licencePlate("ABC" + 1)
                 .vehicleType(VehicleType.AUTO)
+                .ticketList(new ArrayList<>())
                 .build();
 
         ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(1);
 
-        return Ticket.builder()
+        Ticket ticket = Ticket.builder()
                 .ticketID(ticketID)
                 .entryDate(new Date())
                 .exitDate(new Date())
@@ -30,6 +31,9 @@ public class TicketTestSupport {
                 .parkSlot(parkingLot.getParkSlots().get(1))
                 .parkinglot(parkingLot)
                 .build();
+
+        vehicle.getTicketList().add(ticket);
+        return ticket;
     }
 
     public static TicketDto generateTicketDto(int ticketID) {
@@ -50,6 +54,7 @@ public class TicketTestSupport {
         Vehicle vehicle = Vehicle.builder()
                 .licencePlate("ABC" + 1)
                 .vehicleType(VehicleType.AUTO)
+                .ticketList(new ArrayList<>())
                 .build();
 
         ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(1);
@@ -66,6 +71,17 @@ public class TicketTestSupport {
                     .build());
         }
 
+        for (int i = 0; i < count; i++) {
+            ticketList.add(Ticket.builder()
+                    .ticketID(i)
+                    .entryDate(new Date())
+                    .exitDate(new Date())
+                    .isValid(true)
+                    .vehicle(vehicle)
+                    .parkSlot(parkingLot.getParkSlots().get(1))
+                    .parkinglot(parkingLot)
+                    .build());
+        }
         return ticketList;
     }
 

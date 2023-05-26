@@ -8,7 +8,6 @@ import com.aquadrat.parkplatzverwaltung.model.Ticket;
 import com.aquadrat.parkplatzverwaltung.model.Vehicle;
 import com.aquadrat.parkplatzverwaltung.model.dto.TicketCreateRequest;
 import com.aquadrat.parkplatzverwaltung.model.dto.TicketDto;
-import com.aquadrat.parkplatzverwaltung.model.enums.VehicleType;
 import com.aquadrat.parkplatzverwaltung.repository.ParkingLotRepository;
 import com.aquadrat.parkplatzverwaltung.repository.TicketRepository;
 import com.aquadrat.parkplatzverwaltung.repository.VehicleRepository;
@@ -18,8 +17,6 @@ import com.aquadrat.parkplatzverwaltung.support.VehicleTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -123,5 +120,39 @@ public class TicketServiceTest {
 
         TicketDto result = ticketService.createTicket(ticketCreateRequest);
         assertEquals(ticketDto, result);
+    }
+
+    @Test
+    public void parkOutTest() {
+        Ticket ticket = TicketTestSupport.generateTicket(1);
+        TicketDto ticketDto = TicketTestSupport.generateTicketDto(1);
+        when(ticketRepository.findById(1)).thenReturn(Optional.of(ticket));
+        when(ticketRepository.save(any())).thenReturn(ticket);
+        when(ticketMapper.convertToDto(ticket)).thenReturn(ticketDto);
+
+        TicketDto result = ticketService.parkOut(1);
+        assertEquals(ticketDto, result);
+        verify(ticketRepository).findById(1);
+        verify(ticketRepository).save(any());
+        verify(ticketMapper).convertToDto(ticket);
+    }
+
+    @Test
+    public void parkOutTest_whenTicketDoesNotExist_shouldThrowNotFoundException() {
+        when(ticketRepository.findById(2)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> ticketService.parkOut(2));
+        verify(ticketRepository).findById(2);
+        verifyNoInteractions(ticketMapper);
+    }
+
+    @Test
+    public void parkOutTest_whenTicketIsNotValid_shouldThrowNotAvailableException() {
+        Ticket ticket = TicketTestSupport.generateTicket(1);
+        ticket.setValid(false);
+        when(ticketRepository.findById(1)).thenReturn(Optional.of(ticket));
+        assertThrows(NotAvailableException.class, () -> ticketService.parkOut(1));
+        verify(ticketRepository).findById(1);
+        verifyNoInteractions(ticketMapper);
     }
 }

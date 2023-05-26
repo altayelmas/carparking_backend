@@ -3,10 +3,7 @@ package com.aquadrat.parkplatzverwaltung.support;
 import com.aquadrat.parkplatzverwaltung.model.Address;
 import com.aquadrat.parkplatzverwaltung.model.ParkSlot;
 import com.aquadrat.parkplatzverwaltung.model.ParkingLot;
-import com.aquadrat.parkplatzverwaltung.model.dto.AddressDto;
-import com.aquadrat.parkplatzverwaltung.model.dto.ParkSlotDto;
-import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotCreateRequest;
-import com.aquadrat.parkplatzverwaltung.model.dto.ParkingLotDto;
+import com.aquadrat.parkplatzverwaltung.model.dto.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,6 +139,7 @@ public class ParkingLotTestSupport {
         }
         return parkSlotDtoList;
     }
+
     public static AddressDto generateAddressDto() {
         return AddressDto.builder()
                 .addressID(1)
@@ -161,6 +159,78 @@ public class ParkingLotTestSupport {
                 .postCode("TestPostCode")
                 .country("TestCountry")
                 .numberOfSlots(50)
+                .build();
+    }
+
+    public static ParkingLotUpdateRequest generateParkingLotUpdateRequest(int numberOfSlots) {
+        return ParkingLotUpdateRequest.builder()
+                .name("TestParkingLot2")
+                .street("TestStreet2")
+                .city("TestCity2")
+                .postCode("TestPostCode2")
+                .country("TestCountry2")
+                .numberOfSlots(numberOfSlots)
+                .build();
+    }
+
+    public static ParkingLot updateParkingLotWithUpdateRequest(ParkingLot parkingLot, ParkingLotUpdateRequest parkingLotUpdateRequest) {
+        Address address = Address.builder()
+                .addressID(parkingLot.getAddress().getAddressID())
+                .street(parkingLotUpdateRequest.getStreet())
+                .city(parkingLotUpdateRequest.getCity())
+                .postCode(parkingLotUpdateRequest.getPostCode())
+                .parkingLot(parkingLot)
+                .country(parkingLotUpdateRequest.getCountry())
+                .build();
+
+        parkingLot.setAddress(address);
+        parkingLot.setName(parkingLotUpdateRequest.getName());
+        Integer size = parkingLot.getParkSlots().size();
+
+        if (size.equals(parkingLotUpdateRequest.getNumberOfSlots())) {
+            return parkingLot;
+
+        } else if (parkingLotUpdateRequest.getNumberOfSlots() > size) {
+
+            for (int i = 0; i < parkingLotUpdateRequest.getNumberOfSlots() - size; i++) {
+                parkingLot.getParkSlots().add(new ParkSlot(50 + i, true, parkingLot, null));
+            }
+            return parkingLot;
+
+        } else {
+
+            for (int i = size - 1; i >= parkingLotUpdateRequest.getNumberOfSlots(); i--) {
+                parkingLot.getParkSlots().remove(i);
+            }
+            return parkingLot;
+        }
+    }
+
+    public static ParkingLotDto generateUpdatedParkingLotDto(ParkingLot parkingLot) {
+        List<ParkSlotDto> parkSlotDtoList = new ArrayList<>();
+
+        for (ParkSlot parkSlot : parkingLot.getParkSlots()) {
+            parkSlotDtoList.add(ParkSlotDto.builder()
+                    .slotID(parkSlot.getSlotID())
+                    .isAvailable(parkSlot.isAvailable())
+                    .lotID(parkSlot.getParkinglot().getLotID())
+                    .build());
+        }
+
+        AddressDto addressDto = AddressDto.builder()
+                .addressID(parkingLot.getAddress().getAddressID())
+                .street(parkingLot.getAddress().getStreet())
+                .city(parkingLot.getAddress().getCity())
+                .postCode(parkingLot.getAddress().getPostCode())
+                .country(parkingLot.getAddress().getCountry())
+                .lotID(parkingLot.getLotID())
+                .build();
+
+        return ParkingLotDto.builder()
+                .lotID(parkingLot.getLotID())
+                .name(parkingLot.getName())
+                .addressDto(addressDto)
+                .parkSlotDtoList(parkSlotDtoList)
                 .build();
     }
 }
