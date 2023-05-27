@@ -71,18 +71,6 @@ public class TicketTestSupport {
                     .parkinglot(parkingLot)
                     .build());
         }
-
-        for (int i = 0; i < count; i++) {
-            ticketList.add(Ticket.builder()
-                    .ticketID(i)
-                    .entryDate(new Date())
-                    .exitDate(new Date())
-                    .isValid(true)
-                    .vehicle(vehicle)
-                    .parkSlot(parkingLot.getParkSlots().get(1))
-                    .parkinglot(parkingLot)
-                    .build());
-        }
         return ticketList;
     }
 

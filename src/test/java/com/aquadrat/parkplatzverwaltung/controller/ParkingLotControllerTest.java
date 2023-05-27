@@ -140,5 +140,30 @@ public class ParkingLotControllerTest {
         verify(parkingLotService).updateParkingLot(1, parkingLotUpdateRequest);
     }
 
+    @Test
+    public void getParkingLotByIdTest() {
+        ParkingLotDto parkingLotDto = ParkingLotTestSupport.generateParkingLotDto(1);
+        ParkingLotResponse parkingLotResponse = ParkingLotTestSupport.generateParkingLotResponse(parkingLotDto, HttpStatus.OK.toString(), true);
+        when(parkingLotService.getParkingLotById(1)).thenReturn(parkingLotDto);
+        ResponseEntity<ParkingLotResponse> response = parkingLotController.getParkingLotById(1);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(response.getBody(), parkingLotResponse);
+        assertEquals(HttpStatus.OK.toString(), parkingLotResponse.getMessage());
+        verify(parkingLotService).getParkingLotById(1);
+    }
+
+    @Test
+    public void getParkingLotByIdTest_whenNotFoundExceptionIsThrown() {
+        ParkingLotResponse parkingLotResponse = ParkingLotTestSupport.generateParkingLotResponse(null, "Message", false);
+        when(parkingLotService.getParkingLotById(1)).thenThrow(new NotFoundException("Message"));
+        ResponseEntity<ParkingLotResponse> response = parkingLotController.getParkingLotById(1);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(response.getBody(), parkingLotResponse);
+        assertEquals("Message", parkingLotResponse.getMessage());
+        verify(parkingLotService).getParkingLotById(1);
+    }
+
 
 }

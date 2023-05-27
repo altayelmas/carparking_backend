@@ -164,4 +164,25 @@ public class ParkingLotServiceTest {
         verify(parkingLotMapper).convertToDto(updatedParkingLot);
     }
 
+    @Test
+    public void getParkingLotByIdTest() {
+        ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(1);
+        ParkingLotDto parkingLotDto = ParkingLotTestSupport.generateParkingLotDto(1);
+        when(parkingLotRepository.findById(1)).thenReturn(Optional.of(parkingLot));
+        when(parkingLotMapper.convertToDto(parkingLot)).thenReturn(parkingLotDto);
+
+        ParkingLotDto result = parkingLotService.getParkingLotById(1);
+        assertEquals(parkingLotDto, result);
+        verify(parkingLotRepository).findById(1);
+        verify(parkingLotMapper).convertToDto(parkingLot);
+    }
+
+    @Test
+    public void getParkingLotByIdTest_whenParkingLotDoesNotExist_shouldThrowNotFoundException() {
+        when(parkingLotRepository.findById(1)).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> parkingLotService.getParkingLotById(1));
+        verify(parkingLotRepository).findById(1);
+        verifyNoInteractions(parkingLotMapper);
+    }
+
 }
