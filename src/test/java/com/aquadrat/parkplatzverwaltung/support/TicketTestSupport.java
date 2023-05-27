@@ -5,6 +5,7 @@ import com.aquadrat.parkplatzverwaltung.model.Ticket;
 import com.aquadrat.parkplatzverwaltung.model.Vehicle;
 import com.aquadrat.parkplatzverwaltung.model.dto.TicketCreateRequest;
 import com.aquadrat.parkplatzverwaltung.model.dto.TicketDto;
+import com.aquadrat.parkplatzverwaltung.model.dto.TicketResponse;
 import com.aquadrat.parkplatzverwaltung.model.enums.VehicleType;
 
 import java.util.ArrayList;
@@ -109,6 +110,13 @@ public class TicketTestSupport {
                 .vehicleType(VehicleType.AUTO)
                 .lotID(5)
                 .slotID(55)
+                .build();
+    }
+    public static TicketResponse generateTicketResponse(TicketDto ticketDto, boolean isSuccess, String message) {
+        return TicketResponse.builder()
+                .ticketDto(ticketDto)
+                .isSuccess(isSuccess)
+                .message(message)
                 .build();
     }
 }

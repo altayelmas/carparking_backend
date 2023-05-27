@@ -4,6 +4,7 @@ import com.aquadrat.parkplatzverwaltung.model.Address;
 import com.aquadrat.parkplatzverwaltung.model.ParkSlot;
 import com.aquadrat.parkplatzverwaltung.model.ParkingLot;
 import com.aquadrat.parkplatzverwaltung.model.dto.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -231,6 +232,14 @@ public class ParkingLotTestSupport {
                 .name(parkingLot.getName())
                 .addressDto(addressDto)
                 .parkSlotDtoList(parkSlotDtoList)
+                .build();
+    }
+
+    public static ParkingLotResponse generateParkingLotResponse(ParkingLotDto parkingLotDto, String message, boolean isSuccess) {
+        return ParkingLotResponse.builder()
+                .parkingLotDto(parkingLotDto)
+                .isSuccess(isSuccess)
+                .message(message)
                 .build();
     }
 }

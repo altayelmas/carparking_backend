@@ -147,4 +147,21 @@ public class ParkingLotServiceTest {
         verify(parkingLotMapper).convertToDto(updatedParkingLot);
     }
 
+    @Test
+    public void updateParkingLotTest_whenRequestSlotsAreLower() {
+        ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(1);
+        ParkingLotUpdateRequest parkingLotUpdateRequest = ParkingLotTestSupport.generateParkingLotUpdateRequest(30);
+        ParkingLot updatedParkingLot = ParkingLotTestSupport.updateParkingLotWithUpdateRequest(parkingLot, parkingLotUpdateRequest);
+        ParkingLotDto parkingLotDto = ParkingLotTestSupport.generateUpdatedParkingLotDto(updatedParkingLot);
+        when(parkingLotRepository.findById(1)).thenReturn(Optional.of(parkingLot));
+        when(parkingLotRepository.save(updatedParkingLot)).thenReturn(updatedParkingLot);
+        when(parkingLotMapper.convertToDto(updatedParkingLot)).thenReturn(parkingLotDto);
+
+        ParkingLotDto result = parkingLotService.updateParkingLot(1, parkingLotUpdateRequest);
+        assertEquals(parkingLotDto, result);
+        verify(parkingLotRepository).findById(1);
+        verify(parkingLotRepository).save(updatedParkingLot);
+        verify(parkingLotMapper).convertToDto(updatedParkingLot);
+    }
+
 }
