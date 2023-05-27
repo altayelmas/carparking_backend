@@ -2,6 +2,7 @@ package com.aquadrat.parkplatzverwaltung.service;
 
 import com.aquadrat.parkplatzverwaltung.exception.NotAvailableException;
 import com.aquadrat.parkplatzverwaltung.exception.NotFoundException;
+import com.aquadrat.parkplatzverwaltung.exception.SlotsNotEmptyException;
 import com.aquadrat.parkplatzverwaltung.mapper.ParkingLotMapper;
 import com.aquadrat.parkplatzverwaltung.model.ParkingLot;
 import com.aquadrat.parkplatzverwaltung.model.Ticket;
@@ -163,6 +164,30 @@ public class ParkingLotServiceTest {
         verify(parkingLotRepository).save(updatedParkingLot);
         verify(parkingLotMapper).convertToDto(updatedParkingLot);
     }
+
+    @Test
+    public void updateParkingLotTest_whenRequestSlotsAreLowerAndTheSlotsAreNotEmpty_shouldThrowSlotsNotEmptyException() {
+        ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(1);
+        parkingLot.getParkSlots().get(35).setAvailable(false);
+        ParkingLotUpdateRequest parkingLotUpdateRequest = ParkingLotTestSupport.generateParkingLotUpdateRequest(30);
+        when(parkingLotRepository.findById(1)).thenReturn(Optional.of(parkingLot));
+        assertThrows(SlotsNotEmptyException.class, () -> parkingLotService.updateParkingLot(1, parkingLotUpdateRequest));
+        verify(parkingLotRepository).findById(1);
+        verifyNoInteractions(parkingLotMapper);
+    }
+
+    @Test
+    public void updateParkingLotTest_whenRequestSlotsAreLowerAndThereAreTickets_shouldThrowNotAvailableException() {
+        ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(1);
+        ParkingLotUpdateRequest parkingLotUpdateRequest = ParkingLotTestSupport.generateParkingLotUpdateRequest(30);
+        List<Ticket> ticketList = TicketTestSupport.generateTicketList(3);
+        when(parkingLotRepository.findById(1)).thenReturn(Optional.of(parkingLot));
+        when(ticketRepository.findTicketsByParkSlot(parkingLot.getParkSlots().get(35))).thenReturn(ticketList);
+        assertThrows(NotAvailableException.class, () -> parkingLotService.updateParkingLot(1, parkingLotUpdateRequest));
+        verify(parkingLotRepository).findById(1);
+        verifyNoInteractions(parkingLotMapper);
+    }
+
 
     @Test
     public void getParkingLotByIdTest() {

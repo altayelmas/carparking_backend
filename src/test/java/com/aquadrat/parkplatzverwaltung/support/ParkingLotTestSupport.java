@@ -242,4 +242,20 @@ public class ParkingLotTestSupport {
                 .message(message)
                 .build();
     }
+
+    /*public static ParkingLot updateParkingLot(ParkingLot parkingLot, ParkingLotUpdateRequest parkingLotUpdateRequest) {
+        Address address = Address.builder()
+                .addressID(parkingLot.getAddress().getAddressID())
+                .street(parkingLotUpdateRequest.getStreet())
+                .city(parkingLotUpdateRequest.getCity())
+                .postCode(parkingLotUpdateRequest.getPostCode())
+                .parkingLot(parkingLot)
+                .country(parkingLotUpdateRequest.getCountry())
+                .build();
+
+        parkingLot.setAddress(address);
+        parkingLot.setName(parkingLotUpdateRequest.getName());
+
+        return parkingLot;
+    }*/
 }

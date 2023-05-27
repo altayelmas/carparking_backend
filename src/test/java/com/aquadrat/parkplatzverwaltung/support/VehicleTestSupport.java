@@ -3,6 +3,7 @@ package com.aquadrat.parkplatzverwaltung.support;
 import com.aquadrat.parkplatzverwaltung.model.ParkingLot;
 import com.aquadrat.parkplatzverwaltung.model.Ticket;
 import com.aquadrat.parkplatzverwaltung.model.Vehicle;
+import com.aquadrat.parkplatzverwaltung.model.dto.TicketCreateRequest;
 import com.aquadrat.parkplatzverwaltung.model.dto.VehicleDto;
 import com.aquadrat.parkplatzverwaltung.model.enums.VehicleType;
 
@@ -137,5 +138,13 @@ public class VehicleTestSupport {
                     .build());
         }
         return vehicleDtoList;
+    }
+
+    public static Vehicle generateVehicleWithTicketCreateRequest(TicketCreateRequest ticketCreateRequest) {
+        return Vehicle.builder()
+                .licencePlate(ticketCreateRequest.getLicencePlate())
+                .vehicleType(ticketCreateRequest.getVehicleType())
+                .ticketList(new ArrayList<>())
+                .build();
     }
 }

@@ -123,6 +123,27 @@ public class TicketServiceTest {
     }
 
     @Test
+    public void createTicketTest_whenVehicleDoesNotExist() {
+        TicketCreateRequest ticketCreateRequest = TicketTestSupport.generateTicketCreateRequest();
+        ticketCreateRequest.setSlotID(15);
+        Vehicle vehicle = VehicleTestSupport.generateVehicleWithTicketCreateRequest(ticketCreateRequest);
+        ParkingLot parkingLot = ParkingLotTestSupport.generateParkingLot(5);
+        TicketDto ticketDto = TicketTestSupport.generateTicketDto(3);
+        ticketDto.setSlotID(15);
+        ticketDto.setLotID(5);
+        Ticket ticket = TicketTestSupport.generateTicket(3);
+        ticket.setParkSlot(parkingLot.getParkSlots().get(15));
+        when(parkingLotRepository.findById(5)).thenReturn(Optional.of(parkingLot));
+        when(vehicleRepository.findById(ticketCreateRequest.getLicencePlate())).thenReturn(Optional.empty());
+        when(ticketRepository.findTicketByVehicleAndIsValid(vehicle, true)).thenReturn(null);
+        when(ticketRepository.save(any())).thenReturn(ticket);
+        when(ticketMapper.convertToDto(ticket)).thenReturn(ticketDto);
+
+        TicketDto result = ticketService.createTicket(ticketCreateRequest);
+        assertEquals(ticketDto, result);
+    }
+
+    @Test
     public void parkOutTest() {
         Ticket ticket = TicketTestSupport.generateTicket(1);
         TicketDto ticketDto = TicketTestSupport.generateTicketDto(1);
